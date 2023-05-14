@@ -3,7 +3,9 @@ package com.example.Surveyappbackend.controller;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -18,28 +20,39 @@ import com.example.Surveyappbackend.service.EnqueteService;
 public class EnqueteController {
 
   @Autowired
-  private EnqueteService enquteservice;
+  private EnqueteService enqueteservice;
 
   @GetMapping
   public List<Enquete> getEnquetes() {
-    return this.enquteservice.getEnquetes();
+    return this.enqueteservice.getEnquetes();
+  }
+
+  @GetMapping("/{EnqueteId}")
+  public Enquete getEnquete(@PathVariable Long EnqueteId) {
+    return this.enqueteservice.getEnquete(EnqueteId);
   }
 
   @PostMapping
   public void saveEnquete(@RequestBody Enquete enquete) {
-    this.enquteservice.saveEnquete(enquete);
+    this.enqueteservice.saveEnquete(enquete);
 
   }
 
-  @PutMapping
-  public void updateEnquete(@RequestBody Enquete enquete) {
-    this.enquteservice.updateEnquete(enquete);
+  @PutMapping("/{EnqueteId}")
+  public ResponseEntity<Enquete> updateEnquete(@PathVariable Long EnqueteId, @RequestBody Enquete enquete) {
+    Enquete updatedEnquete = this.enqueteservice.updateEnquete(EnqueteId, enquete);
+    return ResponseEntity.ok(updatedEnquete);
 
   }
 
-  @DeleteMapping("/{Id}")
-  public void deleteEnquete(Long Id) {
-    this.enquteservice.deleteEnquete(Id);
+  @DeleteMapping("/{EnqueteId}")
+  public ResponseEntity<String> deleteEnquete(@PathVariable Long EnqueteId) {
+    boolean Enquetedeleted = enqueteservice.deleteEnquete(EnqueteId);
+    if (Enquetedeleted) {
+      return ResponseEntity.ok("Enquete was deleted successfully");
+    } else {
+      return ResponseEntity.notFound().build();
+    }
 
   }
 
