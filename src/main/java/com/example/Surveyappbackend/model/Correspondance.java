@@ -8,9 +8,11 @@ public class Correspondance {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long Id;
 
-  @OneToOne
+  @ManyToOne
+  @JoinColumn(name = "enquete_id")
   private Enquete enquete;
-  @OneToOne
+  @ManyToOne
+  @JoinColumn(name = "question_id")
   private Question question;
 
   public Long getId() {

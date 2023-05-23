@@ -23,16 +23,22 @@ public class Enquete {
   private String sujet;
   @Column(name = "nomResp")
   private String nomResp;
+  @OneToMany(mappedBy = "enquete", cascade = CascadeType.ALL)
+  private List<Correspondance> correspondances = new ArrayList<>();
 
-  @OneToMany
-  @JoinColumn(name = "question_id", referencedColumnName = "Id")
-  private List<Question> questions;
-  @ManyToOne
+  /*
+   * @OneToMany(mappedBy = "enquete", cascade = CascadeType.ALL)
+   * private List<Question> questions = new ArrayList<>();
+   */
+  @ManyToOne(cascade = CascadeType.ALL)
   @JoinColumn(name = "organisation_id", referencedColumnName = "Id")
   private Organisation organisation;
-  @ManyToMany
-  private Repondant repondant;
 
+  /*
+   * 
+   * @ManyToMany
+   * private Repondant repondant;
+   */
   public Long getId() {
     return Id;
   }
@@ -89,32 +95,48 @@ public class Enquete {
     this.nomResp = nomResp;
   }
 
-  public List<Question> getQuestions() {
-    return questions;
-  }
-
-  public void addQuestion(Question question) {
-    if (this.questions == null) {
-      this.questions = new ArrayList<>();
-
-    } else {
-      this.questions.add(question);
-    }
-  }
+  /*
+   * public List<Question> getQuestions() {
+   * return questions;
+   * }
+   * 
+   * public void setQuestions(List<Question> questions) {
+   * this.questions = questions;
+   * }
+   * 
+   * public void addQuestion(Question question) {
+   * if (this.questions == null) {
+   * this.questions = new ArrayList<>();
+   * 
+   * } else {
+   * this.questions.add(question);
+   * }
+   * }
+   */
 
   public Organisation getOrganisation() {
     return organisation;
   }
 
   public void setOrganisation(Organisation organisation) {
+    if (this.organisation == null) {
+      Organisation newOrg = new Organisation();
+      newOrg.setICE(organisation.getICE());
+      newOrg.setNom(organisation.getNom());
+      newOrg.setEmail(organisation.getEmail());
+      this.organisation = newOrg;
+
+    }
     this.organisation = organisation;
   }
-
-  public Repondant getRepondant() {
-    return repondant;
-  }
-
-  public void setRepondant(Repondant repondant) {
-    this.repondant = repondant;
-  }
+  /*
+   * 
+   * public Repondant getRepondant() {
+   * return repondant;
+   * }
+   * 
+   * public void setRepondant(Repondant repondant) {
+   * this.repondant = repondant;
+   * }
+   */
 }

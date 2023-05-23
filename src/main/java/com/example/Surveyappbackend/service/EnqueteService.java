@@ -1,38 +1,75 @@
 package com.example.Surveyappbackend.service;
 
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.example.Surveyappbackend.dtos.EnqueteWithOrganisation;
+import com.example.Surveyappbackend.model.Correspondance;
 import com.example.Surveyappbackend.model.Enquete;
+import com.example.Surveyappbackend.model.Organisation;
 import com.example.Surveyappbackend.model.Question;
+import com.example.Surveyappbackend.repository.CorresRepository;
 import com.example.Surveyappbackend.repository.EnqueteRepository;
 
 /**
  * EnqueteService
  */
+@Service
 public class EnqueteService {
   @Autowired
   private EnqueteRepository enqueteRepository;
   @Autowired
-  private QuestionService questionService;
+  private CorresRepository corresRepository;
 
-  public List<Enquete> getEnquetes() {
-    return enqueteRepository.findAll();
+  public List<EnqueteWithOrganisation> getEnquetes() {
+    List<Enquete> enquetes = enqueteRepository.findAll();
+    List<EnqueteWithOrganisation> enquetesDtos = new ArrayList<>();
+    for (Enquete enquete : enquetes) {
+      Organisation organisation = enquete.getOrganisation();
+      EnqueteWithOrganisation enqueteWithOrganisation = new EnqueteWithOrganisation();
+      enqueteWithOrganisation.setRecievers(enquete.getRecievers());
+      enqueteWithOrganisation.setNomResp(enquete.getNomResp());
+      enqueteWithOrganisation.setDateDebut(enquete.getDateDebut());
+      enqueteWithOrganisation.setDateFin(enquete.getDateFin());
+      enqueteWithOrganisation.setSujet(enquete.getSujet());
+      enqueteWithOrganisation.setDescription(enquete.getDescription());
+      enqueteWithOrganisation.setICE(organisation.getICE());
+      enqueteWithOrganisation.setNom(organisation.getNom());
+      enqueteWithOrganisation.setEmail(organisation.getEmail());
+      enquetesDtos.add(enqueteWithOrganisation);
 
-  }
-
-  public Enquete getEnquete(Long EnqueteId) {
-    Optional<Enquete> optionalEnquete = enqueteRepository.findById(EnqueteId);
-    if (optionalEnquete.isPresent()) {
-      return optionalEnquete.get();
     }
-    return null;
+    return enquetesDtos;
 
   }
 
-  public void saveEnquete(Enquete enquete) {
-    enqueteRepository.save(enquete);
+  public EnqueteWithOrganisation getEnquete(Long EnqueteId) {
+    Enquete enquete = enqueteRepository.findById(EnqueteId).orElse(null);
+    if (enquete != null) {
+      Organisation organisation = enquete.getOrganisation();
+      EnqueteWithOrganisation enqueteWithOrganisation = new EnqueteWithOrganisation();
+      enqueteWithOrganisation.setRecievers(enquete.getRecievers());
+      enqueteWithOrganisation.setNomResp(enquete.getNomResp());
+      enqueteWithOrganisation.setDateDebut(enquete.getDateDebut());
+      enqueteWithOrganisation.setDateFin(enquete.getDateFin());
+      enqueteWithOrganisation.setSujet(enquete.getSujet());
+      enqueteWithOrganisation.setDescription(enquete.getDescription());
+      enqueteWithOrganisation.setICE(organisation.getICE());
+      enqueteWithOrganisation.setNom(organisation.getNom());
+      enqueteWithOrganisation.setEmail(organisation.getEmail());
+      return enqueteWithOrganisation;
+    } else {
+      return null;
+    }
+
+  }
+
+  public Enquete saveEnquete(Enquete enquete) {
+    Enquete enquete2 = enqueteRepository.save(enquete);
+    return enquete2;
 
   }
 
@@ -49,45 +86,32 @@ public class EnqueteService {
   }
 
   public Enquete updateEnquete(Long EnqueteId, Enquete updatedEnquete) {
-    Optional<Enquete> optionalexistingEnquete = enqueteRepository.findById(EnqueteId);
-    if (!optionalexistingEnquete.isPresent()) {
-      return null;
-
-    }
-    Enquete existingEnquete = optionalexistingEnquete.get();
-    for (Question existingquestion : existingEnquete.getQuestions()) {
-      if (!updatedEnquete.getQuestions().contains(existingquestion)) {
-        existingEnquete.getQuestions().remove(existingquestion);
-
-      }
-
-    }
-    for (Question updatedquestion : updatedEnquete.getQuestions()) {
-      Question existingQuestion = questionService.getQuestionById(updatedquestion.getId());
-      if (existingQuestion != null) {
-        existingQuestion.setType(updatedquestion.getType());
-        existingQuestion.setEnquete(updatedquestion.getEnquete());
-        existingQuestion.setPrivate(updatedquestion.isPrivate());
-        existingQuestion.setCreatedAt(updatedquestion.getCreatedAt());
-        existingQuestion.setCreatedBy(updatedquestion.getCreatedBy());
-        existingQuestion.setQcmValues(updatedquestion.getQcmValues());
-
-      } else {
-        Question newQuestion = new Question();
-        newQuestion.setType(updatedquestion.getType());
-        newQuestion.setEnquete(updatedquestion.getEnquete());
-        newQuestion.setPrivate(updatedquestion.isPrivate());
-        newQuestion.setCreatedAt(updatedquestion.getCreatedAt());
-        newQuestion.setCreatedBy(updatedquestion.getCreatedBy());
-        newQuestion.setQcmValues(updatedquestion.getQcmValues());
-        questionService.createQuestion(newQuestion);
-        existingEnquete.getQuestions().add(newQuestion);
-
-      }
-
-    }
+    Enquete existingEnquete = enqueteRepository.findById(EnqueteId).orElse(null);
+    existingEnquete.setDescription(updatedEnquete.getDescription());
+    existingEnquete.setSujet(updatedEnquete.getSujet());
+    existingEnquete.setDateFin(updatedEnquete.getDateFin());
+    existingEnquete.setDateDebut(updatedEnquete.getDateDebut());
+    existingEnquete.setNomResp(updatedEnquete.getNomResp());
+    existingEnquete.setOrganisation(updatedEnquete.getOrganisation());
+    existingEnquete.setRecievers(updatedEnquete.getRecievers());
     return enqueteRepository.save(existingEnquete);
 
+  }
+
+  public List<Question> getQuestionsByEnquete(Long EnqueteId) {
+    Enquete enquete = enqueteRepository.findById(EnqueteId).orElse(null);
+    List<Correspondance> correspondences = corresRepository.findByEnquete(enquete);
+    if (!correspondences.isEmpty()) {
+      List<Question> questions = new ArrayList<>();
+
+      for (Correspondance correspondence : correspondences) {
+        questions.add(correspondence.getQuestion());
+      }
+
+      return questions;
+    } else {
+      return null;
+    }
   }
 
 }
