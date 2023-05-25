@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -22,6 +23,7 @@ import com.example.Surveyappbackend.service.QuestionService;
 
 @RestController
 @RequestMapping(path = "/api/Enquete")
+@CrossOrigin
 public class EnqueteController {
 
   @Autowired
@@ -36,7 +38,7 @@ public class EnqueteController {
 
   @GetMapping("/{EnqueteId}")
   public ResponseEntity<EnqueteWithOrganisation> getEnquete(@PathVariable Long EnqueteId) {
-    return ResponseEntity.ok(this.enqueteservice.getEnquete(EnqueteId));
+    return ResponseEntity.status(HttpStatus.OK).body(this.enqueteservice.getEnquete(EnqueteId));
   }
 
   @PostMapping
@@ -66,7 +68,7 @@ public class EnqueteController {
 
   @GetMapping("/{EnqueteId}/questions")
   public ResponseEntity<List<Question>> getQuestionsByEnquete(@PathVariable Long EnqueteId) {
-    return ResponseEntity.ok(enqueteservice.getQuestionsByEnquete(EnqueteId));
+    return ResponseEntity.status(HttpStatus.OK).body(enqueteservice.getQuestionsByEnquete(EnqueteId));
   }
 
   @PostMapping("/{EnqueteId}/questions")

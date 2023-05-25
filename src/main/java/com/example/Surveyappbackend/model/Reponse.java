@@ -7,8 +7,8 @@ public class Reponse {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long Id;
-  @Column(name = "reponse")
-  private String reponse;
+  @Column(name = "response")
+  private String response;
 
   @OneToOne
   @JoinColumn(name = "repondant_id")
@@ -26,11 +26,11 @@ public class Reponse {
   }
 
   public String getReponse() {
-    return reponse;
+    return response;
   }
 
   public void setReponse(String reponse) {
-    this.reponse = reponse;
+    this.response = reponse;
   }
 
   public Repondant getRepondant() {

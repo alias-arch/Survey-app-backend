@@ -24,9 +24,12 @@ public class Question {
   @OneToMany(mappedBy = "question", cascade = CascadeType.ALL)
   private List<Correspondance> correspondances = new ArrayList<>();
 
-  @OneToOne(cascade = CascadeType.ALL)
-  @JoinColumn(name = "type_id", referencedColumnName = "Id")
-  private Type type;
+  /*
+   * @OneToOne(cascade = CascadeType.ALL)
+   * 
+   * @JoinColumn(name = "type_id", referencedColumnName = "Id")
+   */
+  private String type;
   /*
    * @ManyToOne(cascade = CascadeType.ALL)
    * 
@@ -84,18 +87,20 @@ public class Question {
     this.createdBy = createdBy;
   }
 
-  public Type getType() {
+  public String getType() {
     return type;
   }
 
-  public void setType(Type type) {
-    if (this.type == null) {
-      Type newType = new Type();
-      newType.setLabel(type.getLabel());
-      newType.setDescription(type.getDescription());
-      this.type = newType;
-
-    }
+  public void setType(String type) {
+    /*
+     * if (this.type == null) {
+     * Type newType = new Type();
+     * newType.setLabel(type.getLabel());
+     * newType.setDescription(type.getDescription());
+     * this.type = newType;
+     * 
+     * }
+     */
     this.type = type;
   }
 

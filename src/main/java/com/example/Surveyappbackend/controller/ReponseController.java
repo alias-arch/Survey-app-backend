@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -23,6 +24,7 @@ import com.example.Surveyappbackend.service.ReponseService;
  */
 @RestController()
 @RequestMapping(path = "/api/responses/{EnqueteId}/{RespondantId}")
+@CrossOrigin
 public class ReponseController {
   @Autowired
   private ReponseService reponseService;
